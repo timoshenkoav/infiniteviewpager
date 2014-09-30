@@ -27,17 +27,19 @@ public class MyActivity extends Activity {
     }
 
     private void initAdapter(InfiniteViewPager viewPager) {
-        viewPager.setAdapter(new PagerAdapter(getFragmentManager()));
+        viewPager.setAdapter(new PagerAdapter(getFragmentManager(),viewPager));
     }
-    private static class PagerAdapter extends FragmentPagerAdapter{
+    private static class PagerAdapter extends InfiniteViewPager.PagerAdapterWrapper {
 
-        public PagerAdapter(FragmentManager fm) {
-            super(fm);
+        public PagerAdapter(FragmentManager fm,InfiniteViewPager viewPager) {
+            super(fm,viewPager);
         }
 
+
         @Override
-        public Fragment getItem(int position) {
-            return ItemFragment.getIntance(position);
+        protected Fragment getItemWrapped(int positionForAdapter) {
+
+            return ItemFragment.getIntance(positionForAdapter);
         }
 
         @Override
@@ -59,12 +61,22 @@ public class MyActivity extends Activity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             mPosition = getArguments().getInt("extra_position");
+
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putInt("position",mPosition);
         }
 
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View content = inflater.inflate(R.layout.fragment_item,container,false);
+            if (savedInstanceState!=null){
+                mPosition = savedInstanceState.getInt("position");
+            }
             TextView title = (TextView) content.findViewById(android.R.id.text1);
             title.setText(String.format("%d",mPosition));
             return content;
