@@ -864,7 +864,7 @@ public class InfiniteViewPager extends ViewGroup {
 
         protected abstract Fragment getItemWrapped(int positionForAdapter);
     }
-    private static int getPositionForAdapter(InfiniteViewPager viewPager, int position) {
+    public static int getPositionForAdapter(InfiniteViewPager viewPager, int position) {
         int newPos;
         if (position<0){
             int absPos = Math.abs(position)%viewPager.mExpectedAdapterCount;
