@@ -31,6 +31,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.AccessibilityDelegateCompat;
 import android.support.v4.view.KeyEventCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -38,6 +39,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewConfigurationCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.view.accessibility.AccessibilityRecordCompat;
@@ -220,7 +222,7 @@ public class InfiniteViewPager extends ViewGroup {
     private OnPageChangeListener mOnPageChangeListener;
     private OnPageChangeListener mInternalPageChangeListener;
     private OnAdapterChangeListener mAdapterChangeListener;
-    private PageTransformer mPageTransformer;
+    private ViewPager.PageTransformer mPageTransformer;
     private Method mSetChildrenDrawingOrderEnabled;
 
     private static final int DRAW_ORDER_DEFAULT = 0;
@@ -228,7 +230,8 @@ public class InfiniteViewPager extends ViewGroup {
     private static final int DRAW_ORDER_REVERSE = 2;
     private int mDrawingOrder;
     private ArrayList<View> mDrawingOrderedChildren;
-    private static final ViewPositionComparator sPositionComparator = new ViewPositionComparator();
+    //TODO make static
+    private final ViewPositionComparator sPositionComparator = new ViewPositionComparator();
 
     /**
      * Indicates that the pager is in an idle, settled state. The current page
@@ -312,27 +315,6 @@ public class InfiniteViewPager extends ViewGroup {
         public void onPageScrollStateChanged(int state) {
             // This space for rent
         }
-    }
-
-    /**
-     * A PageTransformer is invoked whenever a visible/attached page is scrolled.
-     * This offers an opportunity for the application to apply a custom transformation
-     * to the page views using animation properties.
-     *
-     * <p>As property animation is only supported as of Android 3.0 and forward,
-     * setting a PageTransformer on a ViewPager on earlier platform versions will
-     * be ignored.</p>
-     */
-    public interface PageTransformer {
-        /**
-         * Apply a property transformation to the given page.
-         *
-         * @param page Apply the transformation to this page
-         * @param position Position of page relative to the current front-and-center
-         *                 position of the pager. 0 is front and center. 1 is one full
-         *                 page position to the right, and -1 is one page position to the left.
-         */
-        public void transformPage(View page, float position);
     }
 
     /**
@@ -612,7 +594,7 @@ public class InfiniteViewPager extends ViewGroup {
      *                            to be drawn from last to first instead of first to last.
      * @param transformer PageTransformer that will modify each page's animation properties
      */
-    public void setPageTransformer(boolean reverseDrawingOrder, PageTransformer transformer) {
+    public void setPageTransformer(boolean reverseDrawingOrder, ViewPager.PageTransformer transformer) {
         if (Build.VERSION.SDK_INT >= 11) {
             final boolean hasTransformer = transformer != null;
             final boolean needsPopulate = hasTransformer != (mPageTransformer != null);
@@ -846,7 +828,7 @@ public class InfiniteViewPager extends ViewGroup {
         }
         return ii;
     }
-    public abstract static class PagerAdapterWrapper extends FragmentPagerAdapter{
+    public abstract static class PagerAdapterWrapper extends FragmentStatePagerAdapter{
 
         private final InfiniteViewPager viewPager;
 
@@ -1785,7 +1767,7 @@ public class InfiniteViewPager extends ViewGroup {
 
                 if (lp.isDecor) continue;
 
-                final float transformPos = (float) (child.getLeft() - scrollX) / getClientWidth();
+                final float transformPos = (float) (child.getLeft() - scrollX) / (float)getClientWidth();
                 mPageTransformer.transformPage(child, transformPos);
             }
         }
@@ -2937,7 +2919,7 @@ public class InfiniteViewPager extends ViewGroup {
         }
     }
 
-    static class ViewPositionComparator implements Comparator<View> {
+    class ViewPositionComparator implements Comparator<View> {
         @Override
         public int compare(View lhs, View rhs) {
             final LayoutParams llp = (LayoutParams) lhs.getLayoutParams();
@@ -2945,7 +2927,7 @@ public class InfiniteViewPager extends ViewGroup {
             if (llp.isDecor != rlp.isDecor) {
                 return llp.isDecor ? 1 : -1;
             }
-            return llp.position - rlp.position;
+            return llp.position-rlp.position;
         }
     }
 }

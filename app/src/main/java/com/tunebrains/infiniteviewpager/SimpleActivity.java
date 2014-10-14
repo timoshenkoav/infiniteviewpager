@@ -7,40 +7,38 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tunebrains.views.InfiniteViewPager;
-import com.tunebrains.views.ParallaxPagerTransformer;
+import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
 
 
-public class MyActivity extends Activity {
+public class SimpleActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my);
-        InfiniteViewPager viewPager = (InfiniteViewPager) findViewById(R.id.view_pager);
-        viewPager.setPageTransformer(false,new ParallaxPagerTransformer(R.id.background));
+        setContentView(R.layout.activity_simple);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         initAdapter(viewPager);
+        viewPager.setPageTransformer(false,new ParallaxPagerTransformer(R.id.background));
     }
 
-    private void initAdapter(InfiniteViewPager viewPager) {
-        viewPager.setAdapter(new PagerAdapter(getFragmentManager(),viewPager));
+    private void initAdapter(ViewPager viewPager) {
+        viewPager.setAdapter(new PagerAdapter(getFragmentManager(),null));
     }
-    private static class PagerAdapter extends InfiniteViewPager.PagerAdapterWrapper {
+    private static class PagerAdapter extends FragmentPagerAdapter {
 
         public PagerAdapter(FragmentManager fm,InfiniteViewPager viewPager) {
-            super(fm,viewPager);
+            super(fm);
         }
 
 
-        @Override
         protected Fragment getItemWrapped(int positionForAdapter) {
 
             return ItemFragment.getIntance(positionForAdapter);
@@ -49,6 +47,11 @@ public class MyActivity extends Activity {
         @Override
         public int getCount() {
             return 4;
+        }
+
+        @Override
+        public Fragment getItem(final int i) {
+            return getItemWrapped(i);
         }
     }
     public static class ItemFragment extends Fragment{
