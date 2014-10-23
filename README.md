@@ -13,7 +13,7 @@ in your build.gradle file
 
     dependencies {
         // ...
-        compile 'com.tunebrains:InfiniteViewPager:0.0.5'
+        compile 'com.tunebrains:InfiniteViewPager:0.0.6'
     }
 
 ## Usage

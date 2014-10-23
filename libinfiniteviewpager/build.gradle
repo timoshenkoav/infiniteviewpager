@@ -3,7 +3,7 @@ apply plugin: 'maven-publish'
 android.libraryVariants
 
 android {
-    compileSdkVersion 20
+    compileSdkVersion 19
     buildToolsVersion '20.0.0'
 
     defaultConfig {
