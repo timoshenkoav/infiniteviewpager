@@ -3,20 +3,15 @@ package com.tunebrains.infiniteviewpager;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tunebrains.views.InfiniteViewPager;
-import com.tunebrains.views.ParallaxPagerTransformer;
 
 
 public class MyActivity extends Activity {
@@ -26,7 +21,7 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         InfiniteViewPager viewPager = (InfiniteViewPager) findViewById(R.id.view_pager);
-        viewPager.setPageTransformer(false,new ParallaxPagerTransformer(R.id.background));
+        viewPager.setPageTransformer(false, new ParallaxPagerTransformer(R.id.background));
         initAdapter(viewPager);
     }
 
@@ -81,38 +76,10 @@ public class MyActivity extends Activity {
             if (savedInstanceState!=null){
                 mPosition = savedInstanceState.getInt("position");
             }
-            final ImageView image = (ImageView) content.findViewById(R.id.background);
-            image.setImageResource(R.drawable.option);
-            image.post(new Runnable() {
-                @Override
-                public void run() {
-                    Matrix matrix = new Matrix();
-                    matrix.reset();
-
-                    float wv = image.getWidth();
-                    float hv = image.getHeight();
-
-                    float wi = image.getDrawable().getIntrinsicWidth();
-                    float hi = image.getDrawable().getIntrinsicHeight();
-
-                    float width = wv;
-                    float height = hv;
-
-                    if (wi / wv > hi / hv) {
-                        matrix.setScale(hv / hi, hv / hi);
-                        width = wi * hv / hi;
-                    } else {
-                        matrix.setScale(wv / wi, wv / wi);
-                        height = hi * wv / wi;
-                    }
-
-                    matrix.preTranslate((wv - width) / 2, (hv - height) / 2);
-                    image.setScaleType(ImageView.ScaleType.MATRIX);
-                    image.setImageMatrix(matrix);
-                }
-            });
             TextView title = (TextView) content.findViewById(android.R.id.text1);
             title.setText(String.format("%d",mPosition));
+            ImageView background = (ImageView) content.findViewById(R.id.background);
+            background.setBackgroundResource(R.drawable.kero);
             return content;
         }
     }
